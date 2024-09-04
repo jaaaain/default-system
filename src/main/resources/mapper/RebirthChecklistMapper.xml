@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=".mapper.RebirthChecklistMapper">
+
+    <!--查询单个-->
+    <select id="queryById" resultType=".entity.RebirthChecklist">
+        select *
+        from rebirth_checklist
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryByLimit" resultType=".entity.RebirthChecklist">
+        select *
+        from rebirth_checklist
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="rebirthReasonId != null and rebirthReasonId != ''">
+                and rebirth_reason_id = #{rebirthReasonId}
+            </if>
+            <if test="defId != null">
+                and Def_id = #{defId}
+            </if>
+            <if test="rebirthAppliTime != null">
+                and rebirth_appli_time = #{rebirthAppliTime}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into rebirth_checklist(rebirth_reason_idDef_idrebirth_appli_timestatus)
+        values (#{rebirthReasonId}#{defId}#{rebirthAppliTime}#{status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into rebirth_checklist(rebirth_reason_idDef_idrebirth_appli_timestatus)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.rebirthReasonId}#{entity.defId}#{entity.rebirthAppliTime}#{entity.status})
+        </foreach>
+    </insert>
+
+    <insert id="UpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into rebirth_checklist(rebirth_reason_idDef_idrebirth_appli_timestatus)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.rebirthReasonId}#{entity.defId}#{entity.rebirthAppliTime}#{entity.status})
+        </foreach>
+        on duplicate key update
+rebirth_reason_id = values(rebirth_reason_id)Def_id = values(Def_id)rebirth_appli_time = values(rebirth_appli_time)status = values(status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update rebirth_checklist
+        <set>
+            <if test="rebirthReasonId != null and rebirthReasonId != ''">
+                rebirth_reason_id = #{rebirthReasonId},
+            </if>
+            <if test="defId != null">
+                Def_id = #{defId},
+            </if>
+            <if test="rebirthAppliTime != null">
+                rebirth_appli_time = #{rebirthAppliTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from rebirth_checklist where id = #{id}
+    </delete>
+
+</mapper>
+

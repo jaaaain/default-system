@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=".mapper.CusTableMapper">
+
+    <!--查询单个-->
+    <select id="queryById" resultType=".entity.CusTable">
+        select *
+        from cus_table
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryByLimit" resultType=".entity.CusTable">
+        select *
+        from cus_table
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="cusName != null and cusName != ''">
+                and Cus_name = #{cusName}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+            <if test="region != null and region != ''">
+                and region = #{region}
+            </if>
+            <if test="industry != null and industry != ''">
+                and industry = #{industry}
+            </if>
+            <if test="contact != null and contact != ''">
+                and Contact = #{contact}
+            </if>
+            <if test="clique != null and clique != ''">
+                and clique = #{clique}
+            </if>
+            <if test="breachOfContract != null">
+                and Breach_of_contract = #{breachOfContract}
+            </if>
+            <if test="value != null">
+                and value = #{value}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into cus_table(Cus_namegenderregionindustryContactcliqueBreach_of_contractvalue)
+        values (#{cusName}#{gender}#{region}#{industry}#{contact}#{clique}#{breachOfContract}#{value})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into cus_table(Cus_namegenderregionindustryContactcliqueBreach_of_contractvalue)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.cusName}#{entity.gender}#{entity.region}#{entity.industry}#{entity.contact}#{entity.clique}#{entity.breachOfContract}#{entity.value})
+        </foreach>
+    </insert>
+
+    <insert id="UpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into cus_table(Cus_namegenderregionindustryContactcliqueBreach_of_contractvalue)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.cusName}#{entity.gender}#{entity.region}#{entity.industry}#{entity.contact}#{entity.clique}#{entity.breachOfContract}#{entity.value})
+        </foreach>
+        on duplicate key update
+Cus_name = values(Cus_name)gender = values(gender)region = values(region)industry = values(industry)Contact = values(Contact)clique = values(clique)Breach_of_contract = values(Breach_of_contract)value = values(value)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cus_table
+        <set>
+            <if test="cusName != null and cusName != ''">
+                Cus_name = #{cusName},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="region != null and region != ''">
+                region = #{region},
+            </if>
+            <if test="industry != null and industry != ''">
+                industry = #{industry},
+            </if>
+            <if test="contact != null and contact != ''">
+                Contact = #{contact},
+            </if>
+            <if test="clique != null and clique != ''">
+                clique = #{clique},
+            </if>
+            <if test="breachOfContract != null">
+                Breach_of_contract = #{breachOfContract},
+            </if>
+            <if test="value != null">
+                value = #{value},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cus_table where id = #{id}
+    </delete>
+
+</mapper>
+
