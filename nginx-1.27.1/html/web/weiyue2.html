@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="app-ui">
+
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <!-- Document title -->
+    <title>违约人员管理系统--违约申请</title>
+
+    <!-- Page JS Plugins CSS -->
+    <link rel="stylesheet" href="/web/static/js/plugins/slick/slick.min.css" />
+    <link rel="stylesheet" href="/web/static/js/plugins/slick/slick-theme.min.css" />
+
+    <!-- AppUI CSS stylesheets -->
+    <link rel="stylesheet" id="css-font-awesome" href="/web/static/css/font-awesome.css" />
+    <link rel="stylesheet" id="css-ionicons" href="/web/static/css/ionicons.css" />
+    <link rel="stylesheet" id="css-bootstrap" href="/web/static/css/bootstrap.css" />
+    <link rel="stylesheet" id="css-app" href="/web/static/css/app.css" />
+    <link rel="stylesheet" id="css-app-custom" href="/web/static/css/app-custom.css" />
+    <!-- End Stylesheets -->
+    <style>
+        body {
+            height: 100%;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: #3932ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background-color: #4054eb;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            /* 最大宽度限制 */
+            padding: 10px;
+            border: 2px solid #ccc;
+            /* 设置外边框 */
+            border-radius: 8px;
+            /* 边框圆角 */
+            background-color: #e8f5f5;
+            /* 表单背景色 */
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input,
+        select {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body class="app-ui layout-has-drawer layout-has-fixed-header">
+    <div class="header">
+        <h3>申请部门&nbsp&nbsp</h3>
+        <button class="logout-btn" id="logoutBtn">退出</button>
+    </div>
+    <div class="app-layout-canvas">
+        <div class="app-layout-container">
+
+            <!-- Drawer -->
+            <aside class="app-layout-drawer">
+
+                <!-- Drawer scroll area -->
+                <div class="app-layout-drawer-scroll">
+                    <!-- Drawer navigation -->
+                    <nav class="drawer-main">
+                        <h1>违约人员<br>管理系统</h1>
+                        <ul class="nav nav-drawer">
+                            <li class="nav-item active">
+                                <a href="data.html"><i class="ion-ios-speedometer-outline"></i>数据统计</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a href="weiyue.html"><i class="ion-ios-speedometer-outline"></i>违约申请</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a href="chongshen.html"><i class="ion-ios-speedometer-outline"></i>重生申请</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- End drawer scroll area -->
+            </aside>
+            <!-- End drawer -->
+        </div>
+    </div>
+    <div class="form-container">
+        <h2 id="weiyue">违约申请表单</h2>
+        <form id="myForm">
+            <label for="reason">违约原因:</label>
+            <select id="reason" name="defId" required>
+                <option value="1">6 个月内，交易对手技术性或资金等原因，给当天结算带来头寸缺口 2 次以上</option>
+                <option value="2">6 个月内因各种原因导致成交后撤单 2 次以上</option>
+                <option value="3">未能按照合约规定支付或延期支付利息，本金或其他交付义务（不包括在宽限期内延期支付）</option>
+                <option value="4">关联违约：集团或集团内任一公司发生违约</option>
+                <option value="5">发生消极债务置换</option>
+                <option value="6">申请破产保护，发生法律接管</option>
+                <option value="7">在其他金融机构违约</option>
+            </select><br>
+
+            <label for="severity">违约严重性:</label>
+            <select id="severity" name="severity" required>
+                <option value="1">低</option>
+                <option value="2">中</option>
+                <option value="3">高</option>
+            </select><br>
+
+            <label for="level">最新外部等级:</label>
+            <select id="level" name="exteriorRate" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+            </select><br>
+
+            <label for="remark">备注信息:</label>
+            <input type="text" id="remark" name="remark"><br>
+
+            <button type="submit">提交申请</button>
+        </form>
+
+    </div>
+    <script>
+        // 获取退出按钮元素
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // 监听按钮点击事件
+        logoutBtn.addEventListener('click', function () {
+            // 清除本地存储的用户信息（假设是 userToken）
+            localStorage.removeItem('userToken');
+            // 跳转到登录页面（假设登录页面为 login.html）
+            window.location.href = 'frontend_login.html';
+        });
+
+        // 从客户列表直接获取！！！！
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const id = urlParams.get('id');
+        console.log(id);
+
+        document.getElementById('myForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            // 获取表单数据
+            const formData = new FormData(this);
+            formData.append('cusId', id);
+            // 转换表单数据为 JSON 格式
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // 读取 JWT token
+            const token = sessionStorage.getItem('token');
+            // 使用 Fetch API 发送 POST 请求
+            fetch(`/api/proposers/default/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token}`  // Token 
+                },
+                body: JSON.stringify(data)  // 将表单数据转换为 JSON 字符串发送
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();  // 解析 JSON 响应
+                })
+                .then(responseData => {
+                    if (responseData.code === 1) {
+                        // 成功处理服务器的响应
+                        console.log('提交成功:', responseData);
+                        alert('提交成功！');
+                        window.location.href = 'weiyue.html';
+                    } else {
+                        console.log('提交失败:', responseData);
+                        alert('提交失败！');
+                    }
+                })
+                .catch(error => {
+                    // 处理请求中的错误
+                    console.error('提交失败:', error);
+                    alert('提交失败，请稍后再试。');
+                });
+        });
+    </script>
+</body>
+
+</html>

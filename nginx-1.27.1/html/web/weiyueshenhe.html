@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="app-ui">
+
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <!-- Document title -->
+    <title>违约人员管理系统</title>
+
+    <!-- Favicons 图标-->
+    <link rel="apple-touch-icon" href="/web/static/img/favicons/apple-touch-icon.png" />
+    <link rel="icon" href="/web/static/img/favicons/favicon.ico" />
+
+    <!-- Google fonts -->
+    <link rel="stylesheet"
+        href="http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,500,900%7CRoboto+Slab:300,400%7CRoboto+Mono:400" />
+
+    <!-- Page JS Plugins CSS -->
+    <link rel="stylesheet" href="/web/static/js/plugins/slick/slick.min.css" />
+    <link rel="stylesheet" href="/web/static/js/plugins/slick/slick-theme.min.css" />
+
+    <!-- AppUI CSS stylesheets -->
+    <link rel="stylesheet" id="css-font-awesome" href="/web/static/css/font-awesome.css" />
+    <link rel="stylesheet" id="css-ionicons" href="/web/static/css/ionicons.css" />
+    <link rel="stylesheet" id="css-bootstrap" href="/web/static/css/bootstrap.css" />
+    <link rel="stylesheet" id="css-app" href="/web/static/css/app.css" />
+    <link rel="stylesheet" id="css-app-custom" href="/web/static/css/app-custom.css" />
+
+    <!-- 引入 Bootstrap CSS -->
+    <!--        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+
+    <!-- 引入 jQuery 和 Bootstrap JS -->
+    <script src="/web/static/js/core/jquery.min.js"></script>
+    <script src="/web/static/js/core/bootstrap.min.js"></script>
+    <!-- End Stylesheets -->
+    <style>
+        body {
+            height: 100%;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            /* 页面背景色 */
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            /* 最大宽度限制 */
+            padding: 10px;
+            border: 2px solid #ccc;
+            /* 设置外边框 */
+            border-radius: 8px;
+            /* 边框圆角 */
+            background-color: #e8f5f5;
+            /* 表单背景色 */
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input,
+        select {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="app-ui layout-has-drawer layout-has-fixed-header">
+    <div class="app-layout-canvas">
+        <div class="app-layout-container">
+            <!-- 添加筛选区域 -->
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <div class="form-group mr-2">
+                                <label for="filterSelect">审核状态筛选:</label>
+                                <select class="form-control" id="filterSelect">
+                                    <option value="">全部</option>
+                                    <option value="0">未审核</option>
+                                    <option value="1">审核通过</option>
+                                    <option value="2">审核未通过</option>
+                                </select>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label for="searchInput">客户名称:</label>
+                                <input type="text" class="form-control" id="searchInput" placeholder="输入客户名称" />
+                            </div>
+                            <button type="button" class="btn btn-primary">搜索</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 显示搜索结果的表格 -->
+                <div class="row justify-content-center mt-4">
+                    <!--                <div class="col-md-8">-->
+                    <div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <!--                            界面展示:违约客户、认定违约原因、严重程度、认定人 、认定申请时间、重生原因、最新外部等级信息-->
+                                    <th>审核编号</th>
+                                    <th>违约客户名</th>
+                                    <th>审核状态</th>
+                                    <th>严重程度</th>
+                                    <th>认定人</th>
+                                    <th>认定申请时间</th>
+                                    <th>违约原因</th>
+                                    <th>最新外部等级</th>
+                                    <!--                            <th>审核人</th>-->
+                                    <!--                            <th>审核时间</th>-->
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="searchResults">
+                                <!-- 动态填充数据 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer -->
+            <aside class="app-layout-drawer">
+                <!-- Drawer scroll area -->
+                <div class="app-layout-drawer-scroll">
+                    <!-- Drawer navigation -->
+                    <nav class="drawer-main">
+                        <h1>违约人员<br />管理系统</h1>
+                        <ul class="nav nav-drawer">
+                            <li class="nav-item active">
+                                <a href="data.html"><i class="ion-ios-speedometer-outline"></i>数据统计</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a href="weiyueshenhe.html"><i class="ion-ios-speedometer-outline"></i>违约审核</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a href="chongshengshenhe.html"><i class="ion-ios-speedometer-outline"></i>重生审核</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- End drawer scroll area -->
+            </aside>
+            <!-- End drawer -->
+        </div>
+    </div>
+
+    <!-- 审核弹出框 -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">违约审核</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>客户名称：</strong><span id="cusNameDetails"></span></p>
+                    <p>
+                        <strong>违约原因：</strong><span id="defReasonDetails"></span>
+                    </p>
+                    <p><strong>严重程度：</strong><span id="severityDetails"></span></p>
+                    <p>
+                        <strong>认定人：</strong><span id="certifierNameDetails"></span>
+                    </p>
+                    <p>
+                        <strong>认定申请时间：</strong><span id="deterAppliTimeDetails"></span>
+                    </p>
+                    <p>
+                        <strong>外部评级：</strong><span id="exteriorRateDetails"></span>
+                    </p>
+                    <p><strong>备注：</strong><span id="remarkDetails"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="approveReview">
+                        审核通过
+                    </button>
+                    <button type="button" class="btn btn-primary" id="rejectReview">
+                        审核不通过
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情弹出框 -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">详情</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 这里放置详情内容 -->
+                    <p>客户名称: <span id="cusNameDetails1"></span></p>
+                    <p>违约原因: <span id="defReasonDetails1"></span></p>
+                    <p>严重程度: <span id="severityDetails1"></span></p>
+                    <p>认定人: <span id="certifierNameDetails1"></span></p>
+                    <p>审核人: <span id="checkerNameDetails1"></span></p>
+                    <p>认定申请时间: <span id="deterAppliTimeDetails1"></span></p>
+                    <p>认定审核时间: <span id="deterModifiedTimeDetails1"></span></p>
+                    <p>外部评级: <span id="exteriorRateDetails1"></span></p>
+                    <p>审核状态: <span id="statusDetails1"></span></p>
+                    <p>备注: <span id="remarkDetails1"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        // 模拟数据
+        var data = [];
+        //查询条件
+        var queryData = {
+            page: 1,
+            size: 1000,
+            status: "",
+            cusName: "",
+        };
+
+        function loadData() {
+            $.ajax({
+                url: "/api/check/default", // 替换为后端接口地址
+                method: "GET",
+                data: queryData,
+                success: function (res) {
+                    $("#searchResults").empty();
+                    if (res.code == 1) {
+                        data = res.data.rows;
+                    } else {
+                        data = [];
+                    }
+                    // 动态填充表格
+                    $.each(data, function (index, item) {
+                        var row = $("<tr>");
+                        row.append($("<td>").text(item.id));
+                        row.append($("<td>").text(item.cusName));
+                        row.append($("<td>").text(
+                            item.status === 0 ? "未审核" :
+                                item.status === 1 ? "已通过" :
+                                    item.status === 2 ? "未通过" : "未知状态"));
+                        row.append($("<td>").text(item.severity));
+                        row.append($("<td>").text(item.certifierName));
+                        row.append($("<td>").text(item.deterAppliTime));
+                        row.append($("<td>").text(item.defReason));
+                        row.append($("<td>").text(item.exteriorRate));
+
+                        if (item.status === 0) {
+                            // row.append($('<td>').append($('<a href="review_form.html" class="btn btn-primary">审核</a>')));
+                            row.append(
+                                $("<td>").append(
+                                    $(
+                                        '<a href="#" class="btn btn-primary review-link">审核</a>'
+                                    )
+                                )
+                            );
+                        } else {
+                            // row.append($('<td>').append($('<a href="details_form.html" class="btn btn-secondary">详情</a>')));
+                            row.append(
+                                $("<td>").append(
+                                    $(
+                                        '<a href="#" class="btn btn-secondary details-link">详情</a>'
+                                    )
+                                )
+                            );
+                        }
+                        row.append($("</tr>"));
+                        $("#searchResults").append(row);
+                    });
+                },
+            });
+        }
+        loadData();
+
+        // 搜索按钮点击事件
+        $("button.btn-primary").on("click", function () {
+            var selectedOption = $("#filterSelect").val();
+            var searchText = $("#searchInput").val();
+            // 清空表格
+            $("#searchResults").empty();
+            queryData.status = selectedOption;
+            queryData.cusName = searchText;
+            loadData();
+        });
+
+        // 审核链接点击事件
+        $(document).on("click", ".review-link", function () {
+            var rowData = $(this).closest("tr").find("td");
+            $("#reviewModal").modal("show");
+            // 提取 ID 和客户名称
+            var id = rowData.eq(0).text(); // 假设 ID 在第一列
+            var cusName = rowData.eq(1).text(); // 假设客户名称在第二列
+
+            // 设置模态框显示的内容
+            $("#confirmReview").data("cusName", cusName);
+            $("#approveReview").data("id", id);
+            $("#rejectReview").data("id", id);
+
+            // 显示详细信息
+            fetch(`/api/check/default/${id}`)
+                .then((response) => {
+                    // 检查响应是否成功
+                    if (!response.ok) {
+                        throw new Error(
+                            `Network response was not ok, status: ${response.status}`
+                        );
+                    }
+                    // 将响应转换为 JSON
+                    return response.json();
+                })
+                .then((data) => {
+                    // 处理返回的数据
+                    console.log("Data received:", data);
+                    // 设置模态框中的内容
+                    $("#cusNameDetails").text(data.data.cusName); // 客户名称
+                    $("#defReasonDetails").text(data.data.defReason); // 违约原因
+                    $("#severityDetails").text(
+                        data.data.severity === 1 ? "低" :
+                            data.data.severity === 2 ? "中" :
+                                data.data.severity === 3 ? "高" : "未知"
+                    ); // 严重程度
+                    $("#certifierNameDetails").text(data.data.certifierName); // 认定人
+                    $("#deterAppliTimeDetails").text(data.data.deterAppliTime); // 认定申请时间
+                    $("#exteriorRateDetails").text(data.data.exteriorRate); // 外部评级
+                    $("#remarkDetails").text(data.data.remark); // 备注
+                })
+                .catch((error) => {
+                    // 处理错误
+                    console.error(
+                        "There was a problem with the fetch operation:",
+                        error
+                    );
+                });
+        });
+        // 详情链接点击事件
+        $(document).on("click", ".details-link", function () {
+            var rowData = $(this).closest("tr").find("td");
+            var id = rowData.eq(0).text(); // ID
+            $("#detailsModal").modal("show");
+            fetch(`/api/check/default/${id}`)
+                .then((response) => {
+                    // 检查响应是否成功
+                    if (!response.ok) {
+                        throw new Error(
+                            `Network response was not ok, status: ${response.status}`
+                        );
+                    }
+                    // 将响应转换为 JSON
+                    return response.json();
+                })
+                .then((data) => {
+                    // 处理返回的数据
+                    console.log("Data received:", data);
+                    // 设置模态框中的内容
+                    $("#cusNameDetails1").text(data.data.cusName); // 客户名称
+                    $("#defReasonDetails1").text(data.data.defReason); // 违约原因
+                    $("#severityDetails1").text(
+                        data.data.severity === 1 ? "低" :
+                            data.data.severity === 2 ? "中" :
+                                data.data.severity === 3 ? "高" : "未知"
+                    ); // 严重程度
+                    $("#certifierNameDetails1").text(data.data.certifierName); // 认定人
+                    $("#checkerNameDetails1").text(data.data.checkerName); // 审核人
+                    $("#deterAppliTimeDetails1").text(data.data.deterAppliTime); // 认定申请时间
+                    $("#deterModifiedTimeDetails1").text(data.data.deterModifiedTime); // 认定审核时间
+                    $("#exteriorRateDetails1").text(data.data.exteriorRate); // 外部评级
+                    $("#statusDetails1").text(
+                        data.data.status === 0 ? "未审核" :
+                            data.data.status === 1 ? "已通过" :
+                                data.data.status === 2 ? "未通过" : "未知状态"
+                    ); // 状态
+                    $("#remarkDetails1").text(data.data.remark); // 备注
+                })
+                .catch((error) => {
+                    // 处理错误
+                    console.error("There was a problem with the fetch operation:", error);
+                });
+        });
+
+        const token = sessionStorage.getItem("token");
+        // 审核通过按钮点击事件;
+        $("#approveReview").on("click", function () {
+            console.log("审核通过");
+            var id = $(this).data("id");
+            fetch(`/api/check/default/${id}?result=1`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        `Network response was not ok, status: ${response.status}`
+                    );
+                }
+                return response.json();
+            }).then((data) => {
+                $("#reviewModal").modal("hide");
+                loadData();
+            }).catch((error) => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
+        });
+        // 审核不通过按钮点击事件
+        $("#rejectReview").on("click", function () {
+            var id = $(this).data("id");
+            console.log("id:", id);
+
+            fetch(`/api/check/default/${id}?result=0`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        `Network response was not ok, status: ${response.status}`
+                    );
+                }
+                return response.json();
+            }).then((data) => {
+                $("#reviewModal").modal("hide");
+                loadData();
+            }).catch((error) => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
+        });
+    });
+</script>
+
+</html>

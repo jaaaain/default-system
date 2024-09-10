@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="app-ui">
+
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <!-- Document title -->
+    <title>登录界面</title>
+
+    <!-- AppUI CSS stylesheets -->
+    <link id="css-font-awesome" href="/web/static/css/font-awesome.css" />
+    <link rel="stylesheet" id="css-ionicons" href="/web/static/css/ionicons.css" />
+    <link rel="stylesheet" id="css-bootstrap" href="/web/static/css/bootstrap.css" />
+    <link rel="stylesheet" id="css-app" href="/web/static/css/app.css" />
+    <link rel="stylesheet" id="css-app-custom" href="/web/static/css/app-custom.css" />
+    <!-- End Stylesheets -->
+    <style>
+        body{
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中  */
+            /* background-color: #f5f5f5; */
+            background-image: url('web/static/img/photos/photo4.jpg'); /* 背景图片的路径 */
+            background-size: cover; /* 确保背景图片覆盖整个页面 */
+            background-position: center; /* 背景图片居中显示 */
+            background-repeat: no-repeat; /* 防止背景图片重复 */
+            background-attachment: fixed; /* 背景图片固定在页面上 */
+        }
+
+        .container {
+            width: 500px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="app-ui">
+    <div class="container">
+        <div class="head">
+            <h1>违约人员管理系统</h1>
+        </div>
+        <div class="card">
+            <h3 class="card-header h4">登录</h3>
+            <div class="card-block">
+                <form onsubmit="event.preventDefault(); login();">
+                    <div class="form-group">
+                        <label class="sr-only" for="frontend_login_name">用户名</label>
+                        <input type="text" class="form-control" id="frontend_login_name" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="frontend_login_password">密码</label>
+                        <input type="password" class="form-control" id="frontend_login_password" placeholder="密码" />
+                    </div>
+                    <div class="form-group">
+                        <label for="frontend_login_remember" class="css-input switch switch-sm switch-app">
+                            <input type="checkbox" id="frontend_login_remember" /><span></span> Remember me
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-app btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- AppUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock and App.js -->
+    <script src="/web/static/js/core/jquery.min.js"></script>
+    <script src="/web/static/js/core/bootstrap.min.js"></script>
+    <script src="/web/static/js/core/jquery.slimscroll.min.js"></script>
+    <script src="/web/static/js/core/jquery.scrollLock.min.js"></script>
+    <script src="/web/static/js/core/jquery.placeholder.min.js"></script>
+    <script src="/web/static/js/app.js"></script>
+    <script src="/web/static/js/app-custom.js"></script>
+    <script>
+        function login() {
+            const username = document.getElementById('frontend_login_name').value;
+            const password = document.getElementById('frontend_login_password').value;
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Login failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 1) {
+                        // 登录成功后，将 JWT 保存到 sessionStorage
+                        sessionStorage.setItem('token', data.data.token);
+                        window.location.href = 'data.html';
+                    } else {
+                        alert('Login failed: ' + data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Login failed due to an error');
+                });
+        }
+    </script>
+</body>
+
+</html>
+
+
