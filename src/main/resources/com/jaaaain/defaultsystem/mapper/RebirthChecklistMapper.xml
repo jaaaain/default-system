@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaaaain.defaultsystem.mapper.RebirthChecklistMapper">
+    <!--查询单个-->
+    <select id="queryVOById" resultType="com.jaaaain.defaultsystem.entity.vo.RebInfoVO">
+        select b.id, d.Cus_name, d.def_reason, d.Severity, u.username as certifierName, u1.username as checkerName,
+               b.rebirth_appli_time as deterAppliTime, b.rebirth_modi_time as deterModifiedTime,
+               d.Exterior_rate, rb.rebirth_reason as rebReason, b.status, b.remark
+        from rebirth_checklist b
+                 join (select id, rebirth_reason from rebirth_reason_table) rb on b.rebirth_reason_id = rb.id
+                 join (select id, username from user) u on b.Certifier = u.id
+                 join (select id, username from user) u1 on b.checker = u1.id
+                 join (select d.id id, c.Cus_name, rd.def_reason, d.Severity, d.Exterior_rate
+                       from default_checklist d
+                                join (select id, def_reason from def_table) rd on d.Def_id = rd.id
+                                join (select id, Cus_name from cus_table) c on d.Cus_id = c.id) d on b.Def_id = d.id
+        where b.id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="VOlist" resultType="com.jaaaain.defaultsystem.entity.vo.RebInfoVO">
+        select b.id, d.Cus_name, d.def_reason, d.Severity, u.username as certifierName, u1.username as checkerName,
+               b.rebirth_appli_time as deterAppliTime, b.rebirth_modi_time as deterModifiedTime,
+               d.Exterior_rate, rb.rebirth_reason as rebReason, b.status, b.remark
+        from rebirth_checklist b
+            join (select id, rebirth_reason from rebirth_reason_table) rb on b.rebirth_reason_id = rb.id
+            join (select id, username from user) u on b.Certifier = u.id
+            join (select id, username from user) u1 on b.checker = u1.id
+            join (select d.id id, c.Cus_name, rd.def_reason, d.Severity, d.Exterior_rate
+                  from default_checklist d
+                      join (select id, def_reason from def_table) rd on d.Def_id = rd.id
+                      join (select id, Cus_name from cus_table) c on d.Cus_id = c.id) d on b.Def_id = d.id
+        <where>
+            <if test="status != null">
+                and b.status = #{status}
+            </if>
+            <if test="cusName != null">
+                and d.Cus_name like CONCAT('%',#{cusName},'%')
+            </if>
+        </where>
+        order by rebirth_appli_time desc
+    </select>
+</mapper>

@@ -1,9 +1,8 @@
 package com.jaaaain.defaultsystem.service;
-
-service;
-
-import
-import com.jaaaain.defaultsystem.entity.RebirthChecklist; .RebirthChecklist;
+import com.jaaaain.defaultsystem.entity.PageBean;
+import com.jaaaain.defaultsystem.entity.RebirthChecklist;
+import com.jaaaain.defaultsystem.entity.vo.RebInfoVO;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 重生人工审核表(RebirthChecklist)表服务接口
@@ -18,30 +17,24 @@ public interface RebirthChecklistService {
     RebirthChecklist queryById(Integer id);
 
     /**
+     * 通过ID查询单条数据
+     * @param id 主键
+     * @return 实例对象
+     */
+    RebInfoVO queryVOById(Integer id);
+
+    /**
      * 分页查询
-     * @param rebirthChecklist 筛选条件
+     * @param page,size,status,cusName
      * @return 查询结果
      */
-    PageBean queryByLimit(Integer page, Integer size, RebirthChecklist rebirthChecklist);
+    PageBean queryByLimit(Integer page, Integer size,Integer status,String cusName);
 
     /**
-     * 新增数据
-     * @param rebirthChecklist 实例对象
-     * @return 实例对象
+     * 审核
+     * @param id,status 审核是否通过，1：通过，2：未通过
+     * @return 影响行数
      */
-    RebirthChecklist insert(RebirthChecklist rebirthChecklist);
-
-    /**
-     * 修改数据
-     * @param rebirthChecklist 实例对象
-     * @return 实例对象
-     */
-    RebirthChecklist update(RebirthChecklist rebirthChecklist);
-
-    /**
-     * 通过主键删除数据
-     * @param id 主键
-     * @return 是否成功
-     */
-    boolean deleteById(Integer id);
+    @Transactional
+    void updateStatus(Integer id, Integer status);
 }

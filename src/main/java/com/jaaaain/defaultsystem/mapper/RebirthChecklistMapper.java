@@ -1,8 +1,9 @@
 package com.jaaaain.defaultsystem.mapper;
 
-mapper;
+import com.jaaaain.defaultsystem.entity.RebirthChecklist;
+import com.jaaaain.defaultsystem.entity.vo.RebInfoVO;
+import org.apache.ibatis.annotations.*;
 
-import .entity.RebirthChecklist;
 import java.util.List;
 
 /**
@@ -16,50 +17,28 @@ public interface RebirthChecklistMapper {
      * @param id 主键
      * @return 实例对象
      */
+    @Select("select * from rebirth_checklist where id=#{id}")
     RebirthChecklist queryById(Integer id);
 
     /**
-     * 查询指定行数据
-     * @param rebirthChecklist 查询条件
+     * 通过ID查询单条数据
+     * @param id 主键
+     * @return 实例对象
+     */
+    RebInfoVO queryVOById(Integer id);
+
+    /**
+     * 查询数据,可根据审核状态进行筛选
      * @return 对象列表
      */
-    List<RebirthChecklist> queryByLimit(RebirthChecklist rebirthChecklist);
+    List<RebInfoVO> VOlist(Integer status,String cusName);
 
     /**
-     * 通过主键删除数据
-     * @param id 主键
+     * 审核
+     * @param status 审核是否通过，1：通过，2：未通过
      * @return 影响行数
      */
-    int deleteById(Integer id);
-    
-    /**
-     * 新增数据
-     * @param rebirthChecklist 实例对象
-     * @return 影响行数
-     */
-    int insert(RebirthChecklist rebirthChecklist);
-
-    /**
-     * 批量新增数据（foreach）
-     * @param entities List<RebirthChecklist> 实例对象列表
-     * @return 影响行数
-     */
-    int insertBatch(List<RebirthChecklist> entities);
-
-    /**
-     * 修改数据
-     * @param rebirthChecklist 实例对象
-     * @return 影响行数
-     */
-    int update(RebirthChecklist rebirthChecklist);
-
-    /**
-     * 批量更新数据（foreach）
-     * @param entities List<RebirthChecklist> 实例对象列表
-     * @return 影响行数
-     * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常
-     */
-    int UpdateBatch(List<RebirthChecklist> entities);
-    
+    @Update("update rebirth_checklist set status=#{status},rebirth_modi_time=NOW() where id=#{id}")
+    int updateStatus(Integer id,Integer status);
 }
 

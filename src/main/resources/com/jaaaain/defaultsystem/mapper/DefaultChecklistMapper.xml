@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaaaain.defaultsystem.mapper.DefaultChecklistMapper">
+
+    <!--查询单个-->
+    <select id="queryVOById" resultType="com.jaaaain.defaultsystem.entity.vo.DefInfoVO">
+        select d.id,c.Cus_name as cusName,r.def_reason as defReason,d.Severity as severity,u.username as certifierName,u1.username as checkerName,
+               d.Deter_appli_time as deterAppliTime,d.Deter_modi_time as deterModifiedTime,d.Exterior_rate as exteriorRate,d.status,d.remark
+        from default_checklist d
+                 join (select id, def_reason from def_table) r on d.Def_id = r.id
+                 join (select id, Cus_name from cus_table) c on d.Cus_id = c.id
+                 join (select id, username from user) u on d.Certifier = u.id
+                 join (select id, username from user) u1 on d.checker = u1.id
+        where d.id = #{id}
+    </select>
+
+
+    <!--查询指定行数据-->
+    <select id="VOlist" resultType="com.jaaaain.defaultsystem.entity.vo.DefInfoVO">
+        select d.id,c.Cus_name as cusName,r.def_reason as defReason,d.Severity as severity,u.username as certifierName,u1.username as checkerName,
+               d.Deter_appli_time as deterAppliTime,d.Deter_modi_time as deterModifiedTime,d.Exterior_rate as exteriorRate,d.status,d.remark
+        from default_checklist d
+            join (select id, def_reason from def_table) r on d.Def_id = r.id
+            join (select id, Cus_name from cus_table) c on d.Cus_id = c.id
+            join (select id, username from user) u on d.Certifier = u.id
+            join (select id, username from user) u1 on d.checker = u1.id
+        <where>
+            <if test="status != null">
+                and d.status = #{status}
+            </if>
+            <if test="cusName != null">
+                and c.Cus_name like CONCAT('%',#{cusName},'%')
+            </if>
+        </where>
+        order by Deter_appli_time desc
+    </select>
+</mapper>
+

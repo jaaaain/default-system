@@ -1,9 +1,8 @@
 package com.jaaaain.defaultsystem.service;
 
-service;
-
-import
-import com.jaaaain.defaultsystem.entity.DefaultChecklist; .DefaultChecklist;
+import com.jaaaain.defaultsystem.entity.PageBean;
+import com.jaaaain.defaultsystem.entity.vo.DefInfoVO;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 违约认定人工审核表(DefaultChecklist)表服务接口
@@ -15,33 +14,20 @@ public interface DefaultChecklistService {
      * @param id 主键
      * @return 实例对象
      */
-    DefaultChecklist queryById(Integer id);
+    DefInfoVO queryById(Integer id);
 
     /**
      * 分页查询
-     * @param defaultChecklist 筛选条件
+     * @param page,size,status
      * @return 查询结果
      */
-    PageBean queryByLimit(Integer page, Integer size, DefaultChecklist defaultChecklist);
+    PageBean queryByLimit(Integer page, Integer size,Integer status,String cusName);
 
     /**
-     * 新增数据
-     * @param defaultChecklist 实例对象
-     * @return 实例对象
+     * 审核
+     * @param id,status 审核是否通过，1：通过，2：未通过
+     * @return 影响行数
      */
-    DefaultChecklist insert(DefaultChecklist defaultChecklist);
-
-    /**
-     * 修改数据
-     * @param defaultChecklist 实例对象
-     * @return 实例对象
-     */
-    DefaultChecklist update(DefaultChecklist defaultChecklist);
-
-    /**
-     * 通过主键删除数据
-     * @param id 主键
-     * @return 是否成功
-     */
-    boolean deleteById(Integer id);
+    @Transactional
+    void updateStatus(Integer id, Integer status);
 }

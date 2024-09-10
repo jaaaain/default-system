@@ -1,13 +1,20 @@
 package com.jaaaain.defaultsystem.service.impl;
 
-service.impl;
-
-import .entity.RebirthChecklist;
-import .mapper.RebirthChecklistMapper;
-import .service.RebirthChecklistService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.jaaaain.defaultsystem.entity.DefaultChecklist;
+import com.jaaaain.defaultsystem.entity.PageBean;
+import com.jaaaain.defaultsystem.entity.RebirthChecklist;
+import com.jaaaain.defaultsystem.entity.vo.RebInfoVO;
+import com.jaaaain.defaultsystem.mapper.CusTableMapper;
+import com.jaaaain.defaultsystem.mapper.DefaultChecklistMapper;
 import com.jaaaain.defaultsystem.mapper.RebirthChecklistMapper;
 import com.jaaaain.defaultsystem.service.RebirthChecklistService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 重生人工审核表(RebirthChecklist)表服务实现类
@@ -17,7 +24,13 @@ import org.springframework.stereotype.Service;
 public class RebirthChecklistServiceImpl implements RebirthChecklistService {
 
     @Autowired
-    private RebirthChecklistMapper rebirthChecklistMapper
+    private RebirthChecklistMapper rebirthChecklistMapper;
+
+    @Autowired
+    private CusTableMapper cusTableMapper;
+    @Autowired
+    private DefaultChecklistMapper defaultChecklistMapper;
+
     /**
      * 通过ID查询单条数据
      * @param id 主键
@@ -29,48 +42,49 @@ public class RebirthChecklistServiceImpl implements RebirthChecklistService {
     }
 
     /**
+     * 通过ID查询单条数据
+     * @param id 主键
+     * @return 实例对象
+     */
+    @Override
+    public RebInfoVO queryVOById(Integer id) {
+        return rebirthChecklistMapper.queryVOById(id);
+    }
+
+    /**
      * 分页查询
-     * @param rebirthChecklist 筛选条件
+     * @param page,size,status,cusName
      * @return 查询结果
      */
     @Override
-    public PageBean queryByLimit(Integer page, Integer size, RebirthChecklist rebirthChecklist) {
+    public PageBean queryByLimit(Integer page, Integer size,Integer status,String cusName) {
         PageHelper.startPage(page, size); // 将下一条搜索改为查count和limit两条
-        List<RebirthChecklist> list = rebirthChecklistMapper.queryAllByLimit(rebirthChecklist);  // 得到的数据直接为PageBean类型
-        Page<RebirthChecklist> p = (Page<RebirthChecklist>) list;  // 强制类型转换
+        List<RebInfoVO> list = rebirthChecklistMapper.VOlist(status,cusName);  // 得到的数据直接为PageBean类型
+        Page<RebInfoVO> p = (Page<RebInfoVO>) list;  // 强制类型转换
         PageBean pageBean = new PageBean(p.getTotal(),p.getResult());
         return pageBean;
     }
 
     /**
-     * 新增数据
-     * @param rebirthChecklist 实例对象
-     * @return 实例对象
+     * 审核
+     * @param result 审核是否通过，1：通过，0：未通过
+     * @return 影响行数
      */
     @Override
-    public RebirthChecklist insert(RebirthChecklist rebirthChecklist) {
-        rebirthChecklistMapper.insert(rebirthChecklist);
-        return rebirthChecklist;
-    }
-
-    /**
-     * 修改数据
-     * @param rebirthChecklist 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public RebirthChecklist update(RebirthChecklist rebirthChecklist) {
-        rebirthChecklistMapper.update(rebirthChecklist);
-        return queryById(rebirthChecklist.getId());
-    }
-
-    /**
-     * 通过主键删除数据
-     * @param id 主键
-     * @return 是否成功
-     */
-    @Override
-    public boolean deleteById(Integer id) {
-        return rebirthChecklistMapper.deleteById(id) > 0;
+    @Transactional
+    public void updateStatus(Integer id, Integer result) {
+        RebirthChecklist rebItem = rebirthChecklistMapper.queryById(id);
+        Integer status0 = rebItem.getStatus();
+        DefaultChecklist defItem = defaultChecklistMapper.queryById(rebItem.getDefId());
+        if (status0 == 0) {
+            if(result==1){
+                cusTableMapper.updateStatus(defItem.getCusId(),0);
+                rebirthChecklistMapper.updateStatus(id,1);
+            }else{
+                rebirthChecklistMapper.updateStatus(id,2);
+            }
+        }else {
+            throw new RuntimeException("已审核过");
+        }
     }
 }

@@ -1,8 +1,9 @@
 package com.jaaaain.defaultsystem.mapper;
 
-mapper;
+import com.jaaaain.defaultsystem.entity.DefaultChecklist;
+import com.jaaaain.defaultsystem.entity.vo.DefInfoVO;
+import org.apache.ibatis.annotations.*;
 
-import .entity.DefaultChecklist;
 import java.util.List;
 
 /**
@@ -12,54 +13,37 @@ import java.util.List;
  @Mapper
 public interface DefaultChecklistMapper {
     /**
-     * 通过ID查询单条数据
-     * @param id 主键
-     * @return 实例对象
+     * 查询数据,可根据审核状态进行筛选
+     * @return 对象列表
      */
+    List<DefInfoVO> VOlist(Integer status,String cusName);
+
+    /**
+     * 通过ID查询单条数据
+     */
+    DefInfoVO queryVOById(Integer id);
+
+    /**
+     * 通过ID查询单条数据
+     */
+    @Select("select * from default_checklist where id=#{id}")
     DefaultChecklist queryById(Integer id);
 
     /**
-     * 查询指定行数据
-     * @param defaultChecklist 查询条件
-     * @return 对象列表
+     * 审核
+     * @param status 审核是否通过，1：通过，2：未通过
+     * @return 影响行数
      */
-    List<DefaultChecklist> queryByLimit(DefaultChecklist defaultChecklist);
+    @Update("update default_checklist set status=#{status},deter_modi_time=NOW() where id=#{id}")
+    int updateStatus(Integer id,Integer status);
 
     /**
-     * 通过主键删除数据
-     * @param id 主键
-     * @return 影响行数
+     *
+     * @param userId
+     * @return
      */
-    int deleteById(Integer id);
-    
-    /**
-     * 新增数据
-     * @param defaultChecklist 实例对象
-     * @return 影响行数
-     */
-    int insert(DefaultChecklist defaultChecklist);
-
-    /**
-     * 批量新增数据（foreach）
-     * @param entities List<DefaultChecklist> 实例对象列表
-     * @return 影响行数
-     */
-    int insertBatch(List<DefaultChecklist> entities);
-
-    /**
-     * 修改数据
-     * @param defaultChecklist 实例对象
-     * @return 影响行数
-     */
-    int update(DefaultChecklist defaultChecklist);
-
-    /**
-     * 批量更新数据（foreach）
-     * @param entities List<DefaultChecklist> 实例对象列表
-     * @return 影响行数
-     * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常
-     */
-    int UpdateBatch(List<DefaultChecklist> entities);
+    @Select("select id from default_checklist where Cus_id=#{cusId} order by Deter_appli_time desc limit 1")
+    Integer queryByCus(Integer cusId);
     
 }
 

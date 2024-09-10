@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaaaain.defaultsystem.mapper.CustomerMapper">
+    <select id="selectRebirthCustomerByRegion" resultType="com.jaaaain.defaultsystem.entity.CustomerByRegion">
+        SELECT region, COUNT(*) AS count
+        FROM cus_table c
+            JOIN (
+            SELECT DISTINCT cus_id
+            FROM default_checklist d
+            JOIN (
+            SELECT def_id
+            FROM rebirth_checklist
+            WHERE status = 1
+            ) r ON d.id = r.def_id
+            ) dr ON c.id = dr.cus_id
+        GROUP BY region
+    </select>
+    <select id="selectRebirthCustomerByIndustry" resultType="com.jaaaain.defaultsystem.entity.CustomerByIndustry">
+        SELECT industry, COUNT(*) AS count
+        FROM cus_table c
+            JOIN (
+            SELECT DISTINCT cus_id
+            FROM default_checklist d
+            JOIN (
+            SELECT def_id
+            FROM rebirth_checklist
+            WHERE status = 1
+            ) r ON d.id = r.def_id
+            ) dr ON c.id = dr.cus_id
+        GROUP BY industry
+    </select>
+</mapper>
